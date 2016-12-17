@@ -1,0 +1,1 @@
+DROP DATABASE IF EXIST sticky_notes_db;
