@@ -12,3 +12,4 @@ stickyNotes.config['MYSQL_DATABASE_HOST'] = Config.HOST
 mysql.init_app(stickyNotes)
 
 from . import User
+from . import ErrorHandler

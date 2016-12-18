@@ -5,7 +5,7 @@ USE sticky_notes_db;
 CREATE TABLE user (
 	id INTEGER AUTO_INCREMENT PRIMARY KEY,
 	login VARCHAR(25) NOT NULL,
-	password VARCHAR(30) NOT NULL,
+	password VARCHAR(50) NOT NULL,
 	name VARCHAR(50),
 	last_name VARCHAR(50)
 );
