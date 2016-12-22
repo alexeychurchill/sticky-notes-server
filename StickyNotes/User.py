@@ -1,6 +1,6 @@
 from . import stickyNotes
 from . import mysql
-from StickyNotes.UserDataSource import userRegister, userLogin, userGetIdByAccessToken, userById, userByLogin
+from StickyNotes.UserDataSource import * #userRegister, userLogin, userGetIdByAccessToken, userById, userByLogin, userUpdate
 from .ResponseCodes import *
 
 from flask import jsonify
@@ -65,7 +65,7 @@ def representsInt(s):
 @stickyNotes.route('/user/<userIdLogin>', methods=['GET'])
 def userByIdRequest(userIdLogin):
     """
-    Request for user by id
+    Request for user by id or login
     """
     token = request.headers['X-AccessToken']
     id = userGetIdByAccessToken(token)
@@ -85,4 +85,40 @@ def userByIdRequest(userIdLogin):
         return jsonify(response({'user':{'id':userId, 'login':login, 'name':name, 'last_name':lastName}}))
     else:
         return jsonify(simpleError(login, 'No such user'))
+
+
+@stickyNotes.route('/user', methods=['POST'])
+def userNameRequest():
+    """
+    Request for setting name and lastname for a user.
+    """
+    token = request.headers['X-AccessToken']
+    id = userGetIdByAccessToken(token)
+    if id == -1:
+        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Unauthoridzed access!'))
+
+    name = ''
+    lastname = ''
+
+    if 'name' in request.form:
+        if request.form['name'] == '':
+            name = None
+        else:
+            name = request.form['name']
+
+    if 'lastname' in request.form:
+        if request.form['lastname'] == '':
+            lastname = None
+        else:
+            lastname = request.form['lastname']
+
+    success, code, message = userUpdate(id, name, lastname)
+
+    if success:
+        return jsonify(simpleResponse(code, message))
+    else:
+        return jsonify(simpleError(code, message))
+
+
+
 

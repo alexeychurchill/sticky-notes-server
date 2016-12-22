@@ -1,0 +1,1 @@
+"C:\Users\Alexey\AppData\Local\Programs\Python\Python35-32\Lib\pydoc.py" %*

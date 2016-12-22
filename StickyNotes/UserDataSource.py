@@ -146,3 +146,36 @@ def userRegister(login, password):
         return False, ERROR_REGISTRATION_FAILED, 'Failed user adding'
     return True, NO_ERROR, 'Registrarion successful!'
     
+
+def userUpdate(id, name='', lastname=''):
+    """
+    Updates user's name and lastname.
+    If you need to unset name or lastname they must equal None.
+    int, str, str -> bool, int, str
+    """
+    if name == '' and lastname == '':
+        return True, NO_ERROR, 'No one changed'
+    queryFields = ''
+    if name != '':
+        if name == None:
+            queryFields = 'name=null'
+        else:
+            queryFields = 'name="' + name + '"'
+    if lastname != '':
+        queryFields += ' '
+        if lastname == None:
+            queryFields += 'last_name=null'
+        else:
+            queryFields += 'last_name="' + lastname + '"'
+    query = QUERY_UPDATE_USER
+    query = query.format(**{'fields':queryFields, 'id':id})
+
+    try:
+        cursor.execute(query)
+        connection.commit()
+    except Exception as e:
+        return False, ERROR_SOME_MYSTERY, 'Failed to update'
+    
+    return True, NO_ERROR, 'Success!'
+
+    
