@@ -1,11 +1,11 @@
-from . import stickyNotes
-from . import mysql
-from StickyNotes.UserDataSource import *
-from .ResponseCodes import *
+from .. import stickyNotes
+from .. import mysql
+from .UserDataSource import *
+from ..ResponseCodes import *
 
 from flask import jsonify
 from flask import request
-from StickyNotes.utils.Response import response, simpleError, simpleResponse
+from ..utils.Response import response, simpleError, simpleResponse
 
 @stickyNotes.route('/user/register', methods=['POST'])
 def userRegisterRequest():

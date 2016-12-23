@@ -1,6 +1,6 @@
-from . import stickyNotes
-from . import mysql
-from .ResponseCodes import *
+from .. import stickyNotes
+from .. import mysql
+from ..ResponseCodes import *
 from .UserQueries import *
 import hashlib
 import random
