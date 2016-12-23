@@ -1,6 +1,6 @@
 from . import stickyNotes
 from . import mysql
-from StickyNotes.UserDataSource import * #userRegister, userLogin, userGetIdByAccessToken, userById, userByLogin, userUpdate
+from StickyNotes.UserDataSource import *
 from .ResponseCodes import *
 
 from flask import jsonify
@@ -38,11 +38,14 @@ def userLoginRequest():
     else:
         return jsonify(simpleError(code, message))
 
+
 @stickyNotes.route('/user', methods=['GET'])
 def userRequest():
     """
     Request for current user
     """
+    if not 'X-AccessToken' in request.headers:
+        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Access token didn\'t provided'))
     token = request.headers['X-AccessToken']
     id = userGetIdByAccessToken(token)
     if id == -1:
@@ -67,6 +70,8 @@ def userByIdRequest(userIdLogin):
     """
     Request for user by id or login
     """
+    if not 'X-AccessToken' in request.headers:
+        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Access token didn\'t provided'))
     token = request.headers['X-AccessToken']
     id = userGetIdByAccessToken(token)
     if id == -1:
@@ -88,10 +93,12 @@ def userByIdRequest(userIdLogin):
 
 
 @stickyNotes.route('/user', methods=['POST'])
-def userNameRequest():
+def userChangedRequest():
     """
     Request for setting name and lastname for a user.
     """
+    if not 'X-AccessToken' in request.headers:
+        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Access token didn\'t provided'))
     token = request.headers['X-AccessToken']
     id = userGetIdByAccessToken(token)
     if id == -1:

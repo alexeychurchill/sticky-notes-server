@@ -162,7 +162,8 @@ def userUpdate(id, name='', lastname=''):
         else:
             queryFields = 'name="' + name + '"'
     if lastname != '':
-        queryFields += ' '
+        if queryFields != '':
+            queryFields += ', '
         if lastname == None:
             queryFields += 'last_name=null'
         else:
@@ -174,7 +175,7 @@ def userUpdate(id, name='', lastname=''):
         cursor.execute(query)
         connection.commit()
     except Exception as e:
-        return False, ERROR_SOME_MYSTERY, 'Failed to update'
+        return False, ERROR_SOME_MYSTERY, 'Some mystery error was occured'
     
     return True, NO_ERROR, 'Success!'
 
