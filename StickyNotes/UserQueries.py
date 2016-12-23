@@ -6,3 +6,4 @@ QUERY_GET_USER_BY_LOGIN = 'SELECT id, login, name, last_name FROM user WHERE log
 QUERY_GET_USER_ID_BY_CREDENTIALS = 'SELECT id FROM user WHERE login="{login}" AND password="{password}"'
 QUERY_GET_USER_ID_BY_TOKEN = 'SELECT user_id AS id FROM access_token WHERE access_token="{access_token}"'
 QUERY_SET_USER_TOKEN = 'INSERT INTO access_token(user_id, access_token) VALUES ({id}, "{token}")'
+QUERY_SEARCH_USER = 'SELECT id, login, name, last_name FROM user WHERE login LIKE "%{query}%"'

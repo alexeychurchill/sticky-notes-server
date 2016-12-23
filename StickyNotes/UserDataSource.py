@@ -179,4 +179,30 @@ def userUpdate(id, name='', lastname=''):
     
     return True, NO_ERROR, 'Success!'
 
+
+def userSearch(loginQuery):
+    """
+    Performs search in users' logins
+    str -> bool, [{str:int, str:str, str:str, str:str}]
+    """
+    if loginQuery == '':
+        return True, []
+    query = QUERY_SEARCH_USER
+    query = query.format(**{'query':loginQuery})
+
+    cursor.execute(query)
+
+    data = cursor.fetchall()
+
+    userList = []
+    for userTuple in data:
+        id, login, name, lastname = userTuple
+        userList.append({'id':id, 'login':login, 'name':name, 'lastname':lastname})
+
+    return True, userList
+
+
+
+    
+
     

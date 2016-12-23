@@ -127,5 +127,27 @@ def userChangedRequest():
         return jsonify(simpleError(code, message))
 
 
+@stickyNotes.route('/user/search', methods=['POST'])
+def userSearchRequest():
+    """
+    Request for searching users by their nickname
+    """
+    if not 'X-AccessToken' in request.headers:
+        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Access token didn\'t provided'))
+    token = request.headers['X-AccessToken']
+    id = userGetIdByAccessToken(token)
+    if id == -1:
+        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Unauthoridzed access!'))
 
+    if not 'query' in request.form:
+        return jsonify(simpleError(ERROR_NO_DATA, 'No query provided'))
+
+    query = request.form['query']
+
+    success, users = userSearch(query)
+
+    return jsonify(response({'users':users}))
+
+
+    
 
