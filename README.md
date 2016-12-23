@@ -1,2 +1,2 @@
 # Server for StickyNotes app
-** WARNING! Warning! Quotes didn't escaped! **
+**WARNING! Quotes didn't escaped!**
