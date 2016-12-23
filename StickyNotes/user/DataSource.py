@@ -1,7 +1,7 @@
 from .. import stickyNotes
 from .. import mysql
 from ..ResponseCodes import *
-from .UserQueries import *
+from .Queries import *
 import hashlib
 import random
 

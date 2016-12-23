@@ -1,6 +1,6 @@
 from .. import stickyNotes
 from .. import mysql
-from .UserDataSource import *
+from .DataSource import *
 from ..ResponseCodes import *
 
 from flask import jsonify
