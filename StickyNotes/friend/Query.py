@@ -1,0 +1,2 @@
+QUERY_CHECK_REQUEST = """
+    SELECT COUNT(*) 
