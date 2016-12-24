@@ -7,21 +7,22 @@ cursor = connection.cursor()
 
 def noteCreate(ownerId, title):
     """
-    Creates note. Only entry will be created!
+    Creates note
     int, str -> bool, int, string, int
     """
     query = QUERY_CREATE_NOTE_ENTRY
     query = query.format(**{'owner_id':ownerId, 'title':title})
     data = None
     try:
-        data = cursor.execute(query)
+        cursor.execute(query)
         connection.commit()
+        data = cursor.fetchone()
     except Exception as e:
         return False, ERROR_CREATION_NOTE, 'Error creating note', -1
-    newNoteId = -1
+    noteId = -1
     if data != None:
-        newNoteId, = data
-    return True, NO_ERROR, 'Success', newNoteId
+        noteId, = data
+    return True, NO_ERROR, 'Note created', noteId
 
 
 def noteUpdate(ownerId, noteId, text):
@@ -58,7 +59,7 @@ def noteUpdateMetadata(ownerId, noteId, title = '', subject = ''):
     if subject != '':
         if queryFields != '':
             queryFields += ', '
-        queryFields += 'subject="' + subject '"'
+        queryFields += 'subject="' + subject + '"'
 
     query = query.format(**{'owner_id':ownerId, 'note_id':noteId, 'fields':queryFields})
     
@@ -74,27 +75,29 @@ def noteUpdateMetadata(ownerId, noteId, title = '', subject = ''):
 def noteGet(ownerId, noteId):
     """
     Gets note
-    int, int -> bool, int, {str:int, str:str, str:str, str:str,
+    int, int -> bool, int, str, {str:int, str:str, str:str, str:str,
     str:int, str:int, str:int}
     """
 
     query = QUERY_GET_NOTE
     query = query.format(**{'id':noteId, 'owner_id':ownerId})
 
-    data = cursor.execute(query)
+    cursor.execute(query)
+
+    data = cursor.fetchone()
 
     if data == None:
-        return False, ERROR_GETTING_NOTE, None
+        return False, ERROR_GETTING_NOTE, 'Error getting note', None
 
     id, title, subject, text, creationDate, changeDate, ownerId = data
 
-    return True, NO_ERROR, {
+    return True, NO_ERROR, '', {
         'id':id,
         'title':title,
         'subject':subject,
         'text':text,
         'creation_date':creationDate,
-        'changeDate':changeDate,
+        'change_date':changeDate,
         'owner_id':ownerId
         }
 
@@ -103,16 +106,17 @@ def noteList(ownerId, page = 0, count = 15):
     """
     Gets notes list
     Returns only entries
-    int, int, int -> bool, int, {str:int,
+    int, int, int -> bool, int, str, [{str:int,
     str:str, str:str,
     str:int, str:int,
-    str:int}
+    str:int}]
     """
 
     query = QUERY_GET_NOTES_LIST
     query = query.format(**{'owner_id':ownerId, 'offset':(page * count), 'count':count})
 
-    data = cursor.execute(query)
+    cursor.execute(query)
+    data = cursor.fetchall()
 
     if data == None:
         return False, ERROR_GETTING_NOTES_LIST, 'Failed', None
@@ -120,7 +124,7 @@ def noteList(ownerId, page = 0, count = 15):
     notesList = []
 
     for noteTuple in data:
-        id, title, subject, creationDate, changeData, ownerId = noteTuple
+        id, title, subject, creationDate, changeDate, ownerId = noteTuple
         noteDict = {
             'id':id,
             'title':title,
