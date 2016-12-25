@@ -1,0 +1,19 @@
+/shared/share
+	POST
+		note_id
+		user_id
+		edit_permission
+
+/shared/unshare
+	POST
+		sharing_id
+
+/shared/<int:note_id>
+	GET
+
+/shared/list/<int:page>
+	GET
+
+/shared/list/my/<int:page>
+	GET
+
