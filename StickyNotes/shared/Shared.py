@@ -6,12 +6,9 @@ from ..utils.Response import *
 from flask import jsonify
 from flask import request
 
-@stickyNotes.route('/note/create', methods=['POST'])
-def noteCreateRequest():
+@stickyNotes.route('/shared/share', methods=['POST'])
+def sharedShareRequest():
     """
-    Note creation request
-    Needs only title
-    Returns id of the new note
     """
     if not 'X-AccessToken' in request.headers:
         return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Access token didn\'t provided'))
@@ -22,12 +19,22 @@ def noteCreateRequest():
     if id == -1:
         return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Unauthorized access!'))
 
-    if not 'title' in request.form:
-        return jsonify(simpleError(ERROR_NO_DATA, 'You cann\'t create note without title'))
-
-    title = request.form['title']
+    if not 'note_id' in request.form:
+        return jsonify(simpleError(ERROR_NO_DATA, 'You need to specify id of the note you want share'))
     
-    success, resultCode, resultMessage, noteId = noteCreate(id, title)
+    noteId = request.form['note_id']
+
+    if not 'edit_permission' in request.form:
+        return jsonify(simpleError(ERROR_NO_DATA, 'You need to specify edit permission'))
+
+    editPermission = request.form['edit_permission']
+
+    if not 'user_id' in request.form:
+        return jsonify(simpleError(ERROR_NO_DATA, 'You need to specify id of the user'))
+    
+    userId = request.form['user_id']
+
+    success, resultCode, resultMessage = sharedShare(id, userId, noteId, editPermission)
 
     if success:
         return jsonify(simpleResponse(resultCode, resultMessage))
@@ -35,10 +42,9 @@ def noteCreateRequest():
         return jsonify(simpleError(resultCode, resultMessage))
 
 
-@stickyNotes.route('/note/<int:noteId>', methods=['GET'])
-def noteGetRequest(noteId):
+@stickyNotes.route('/shared/sharing/<int:sharingId>/unshare', methods=['POST'])
+def sharedUnshareRequest(sharingId):
     """
-    Gets the note by it's id
     """
     if not 'X-AccessToken' in request.headers:
         return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Access token didn\'t provided'))
@@ -49,18 +55,80 @@ def noteGetRequest(noteId):
     if id == -1:
         return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Unauthorized access!'))
 
-    success, resultCode, resultMessage, note = noteGet(id, noteId)
+    success, resultCode, resultMessage = sharedUnshare(id, sharingId)
 
     if success:
-        return jsonify(response(note))
+        return jsonify(simpleResponse(resultCode, resultMessage))
     else:
         return jsonify(simpleError(resultCode, resultMessage))
 
 
-@stickyNotes.route('/note/<int:noteId>/update', methods=['POST'])
-def noteUpdateRequest(noteId):
+@stickyNotes.route('/shared/list/<int:page>', methods=['GET'])
+def sharedListRequest(page):
     """
-    Updates note
+    """
+    if not 'X-AccessToken' in request.headers:
+        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Access token didn\'t provided'))
+    
+    token = request.headers['X-AccessToken']
+    id = userGetIdByAccessToken(token)
+    
+    if id == -1:
+        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Unauthorized access!'))
+
+    success, resultCode, resultMessage, notes = sharedList(id, page)
+
+    if success:
+        return jsonify(response({'notes':notes}))
+    else:
+        return jsonify(simpleError(resultCode, resultMessage))
+
+
+@stickyNotes.route('/shared/<int:noteId>/to/<int:page>', methods=['GET'])
+def sharedToListRequest(noteId, page):
+    """
+    """
+    if not 'X-AccessToken' in request.headers:
+        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Access token didn\'t provided'))
+    
+    token = request.headers['X-AccessToken']
+    id = userGetIdByAccessToken(token)
+    
+    if id == -1:
+        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Unauthorized access!'))
+
+    success, resultCode, resultMessage, users = sharedToList(id, noteId, page)
+
+    if success:
+        return jsonify(response({'users':users}))
+    else:
+        return jsonify(simpleError(resultCode, resultMessage))
+
+
+@stickyNotes.route('/shared/<int:noteId>', methods=['GET'])
+def sharedGetRequest(noteId):
+    """
+    """
+    if not 'X-AccessToken' in request.headers:
+        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Access token didn\'t provided'))
+    
+    token = request.headers['X-AccessToken']
+    id = userGetIdByAccessToken(token)
+    
+    if id == -1:
+        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Unauthorized access!'))
+
+    success, resultCode, resultMessage, note = sharedGet(id, noteId)
+
+    if success:
+        return jsonify(response({'note':note}))
+    else:
+        return jsonify(simpleError(resultCode, resultMessage))
+
+
+@stickyNotes.route('/shared/<int:noteId>/update', methods=['POST'])
+def sharedUpdateRequest(noteId):
+    """
     """
     if not 'X-AccessToken' in request.headers:
         return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Access token didn\'t provided'))
@@ -72,64 +140,13 @@ def noteUpdateRequest(noteId):
         return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Unauthorized access!'))
 
     if not 'text' in request.form:
-        return jsonify(simpleResponse(NO_ERROR, 'Nothing to update'))
-
+        return jsonify(simpleError(ERROR_NO_DATA, 'You need to specify new text'))
+    
     text = request.form['text']
-
-    success, resultCode, resultMessage = noteUpdate(id, noteId, text)
+    
+    success, resultCode, resultMessage = sharedUpdate(id, noteId, text)
 
     if success:
         return jsonify(simpleResponse(resultCode, resultMessage))
     else:
         return jsonify(simpleError(resultCode, resultMessage))
-
-
-@stickyNotes.route('/note/list/<int:page>', methods=['GET'])
-def noteGetListRequest(page):
-    """
-    Gets list of the user's notes
-    One page contains 10 notes
-    """
-    if not 'X-AccessToken' in request.headers:
-        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Access token didn\'t provided'))
-    
-    token = request.headers['X-AccessToken']
-    id = userGetIdByAccessToken(token)
-    
-    if id == -1:
-        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Unauthorized access!'))
-
-    success, resultCode, resultMessage, notes = noteList(id, page, 10)
-
-    if success:
-        return jsonify(response({
-            'notes':notes,
-            'count_current':len(notes)
-            }))
-    else:
-        return jsonify(simpleError(resultCode, resultMessage))
-
-
-@stickyNotes.route('/note/<int:noteId>/delete', methods=['POST'])
-def noteDeleteRequest(noteId):
-    """
-    Deletes note
-    """
-    if not 'X-AccessToken' in request.headers:
-        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Access token didn\'t provided'))
-    
-    token = request.headers['X-AccessToken']
-    id = userGetIdByAccessToken(token)
-    
-    if id == -1:
-        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Unauthorized access!'))
-
-    success, resultCode, resultMessage = noteDelete(id, noteId)
-
-    if success:
-        return jsonify(simpleResponse(resultCode, resultMessage))
-    else:
-        return jsonify(simpleError(resultCode, resultMessage))
-
-
-###

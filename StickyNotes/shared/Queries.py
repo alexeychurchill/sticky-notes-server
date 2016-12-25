@@ -22,7 +22,7 @@ QUERY_SHARED_TO_ME = """
     note.id AS note_id,
     note.title AS title,
     note.subject AS subject,
-    note.change_date AS change_date,
+    UNIX_TIMESTAMP(note.change_date) AS change_date,
     user.id AS owner_id,
     user.login AS owner_login,
     user.name AS owner_name,
@@ -55,3 +55,42 @@ QUERY_SHARED_TO = """
     LIMIT {offset},{count}
 """
     
+QUERY_SHARED_GET = """
+    SELECT
+    note.id AS id,
+    note.title AS title,
+    note.subject AS subject,
+    note.text AS text,
+    UNIX_TIMESTAMP(note.change_date) AS change_date,
+    note.owner_id AS owner_id,
+    shared_note.edit_permission AS edit_permission
+    FROM
+    note, shared_note
+    WHERE
+    note.id=shared_note.note_id
+    AND
+    shared_note.note_id={note_id}
+    AND
+    shared_note.user_id={owner_id}
+"""
+
+QUERY_SHARED_CAN_UPDATE = """
+    SELECT
+    edit_permission
+    FROM
+    shared_note
+    WHERE
+    note_id={note_id}
+    AND
+    user_id={owner_id}
+    LIMIT 1
+"""
+
+QUERY_SHARED_UPDATE = """
+    UPDATE
+    note
+    SET
+    text={text}
+    WHERE
+    id={note_id}
+"""

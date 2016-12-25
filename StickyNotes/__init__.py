@@ -14,4 +14,5 @@ mysql.init_app(stickyNotes)
 from .user import User
 from .note import Note
 from .friend import Friend
+from .shared import Shared
 from . import ErrorHandler
