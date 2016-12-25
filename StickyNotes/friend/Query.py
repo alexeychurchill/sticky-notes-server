@@ -65,10 +65,10 @@ QUERY_DELETE_REQUEST = """
 
 QUERY_ACCEPT_REQUEST = """
     BEGIN;
-    SELECT requester_id INTO @user_a_id FROM friend_request WHERE id={id} AND (requester_id={owner_id} OR user_id={owner_id});
-    SELECT user_id INTO @user_b_id FROM friend_request WHERE id={id} AND (requester_id={owner_id} OR user_id={owner_id});
+    SELECT requester_id INTO @user_a_id FROM friend_request WHERE id={id} AND user_id={owner_id};
+    SELECT user_id INTO @user_b_id FROM friend_request WHERE id={id} AND user_id={owner_id};
     INSERT INTO friend(user_a_id, user_b_id) VALUES (@user_a_id, @user_b_id);
-    DELETE FROM friend_request WHERE id={id} AND (requester_id={owner_id} OR user_id={owner_id});
+    DELETE FROM friend_request WHERE id={id} AND user_id={owner_id};
     COMMIT;
 """
 

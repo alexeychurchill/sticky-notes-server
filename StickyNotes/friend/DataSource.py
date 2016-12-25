@@ -52,8 +52,9 @@ def friendMakeRequest(ownerId, userId):
         return False, ERROR_REQUEST_EXISTS, 'Such friendship request already exists!'
 
     if friendCheckIfFriend(ownerId, userId):
-        return False, ERROR_REQUEST_EXISTS, 'Already friends query = QUERY_MAKE_REQUEST
-
+        return False, ERROR_REQUEST_EXISTS, 'Already friends!'
+    
+    query = QUERY_MAKE_REQUEST
     query = query.format(**{'requester_id':ownerId, 'user_id':userId})
 
     try:
@@ -65,7 +66,7 @@ def friendMakeRequest(ownerId, userId):
     return True, NO_ERROR, 'Friendship requested!'
 
 
-def friendGetMyRequests(ownerId, page, count):
+def friendGetMyRequests(ownerId, page = 0, count = 5):
     """
     Returns user's friendship requests
     int, int, int -> bool, int, str, [{str:int, str:int, str:int,
@@ -75,7 +76,7 @@ def friendGetMyRequests(ownerId, page, count):
     query = query.format(**{'owner_id':ownerId, 'offset':(page * count), 'count':count})
 
     cursor.execute(query)
-    data = cursor.fetchone()
+    data = cursor.fetchall()
 
     if data == None:
         return False, ERROR_DATABASE, 'Nothing was returned'
@@ -105,7 +106,7 @@ def friendGetRequests(ownerId, page = 0, count = 5):
     query = query.format(**{'owner_id':ownerId, 'offset':(page * count), 'count':count})
 
     cursor.execute(query)
-    data = cursor.fetchone()
+    data = cursor.fetchall()
 
     if data == None:
         return False, ERROR_DATABASE, 'Nothing was returned'
