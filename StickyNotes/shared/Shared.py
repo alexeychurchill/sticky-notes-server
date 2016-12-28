@@ -118,10 +118,10 @@ def sharedGetRequest(noteId):
     if id == -1:
         return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Unauthorized access!'))
 
-    success, resultCode, resultMessage, note = sharedGet(id, noteId)
+    success, resultCode, resultMessage, sharedNote = sharedGet(id, noteId)
 
     if success:
-        return jsonify(response({'note':note}))
+        return jsonify(response(sharedNote))
     else:
         return jsonify(simpleError(resultCode, resultMessage))
 

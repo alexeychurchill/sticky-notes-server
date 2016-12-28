@@ -22,11 +22,9 @@ QUERY_SHARED_TO_ME = """
     note.id AS note_id,
     note.title AS title,
     note.subject AS subject,
+    UNIX_TIMESTAMP(note.creation_date) AS creation_date,
     UNIX_TIMESTAMP(note.change_date) AS change_date,
-    user.id AS owner_id,
-    user.login AS owner_login,
-    user.name AS owner_name,
-    user.last_name AS owner_lastname
+    user.id AS owner_id
     FROM
     shared_note, note, user
     WHERE
@@ -88,9 +86,9 @@ QUERY_SHARED_CAN_UPDATE = """
 
 QUERY_SHARED_UPDATE = """
     UPDATE
-    note
+    note_text
     SET
-    text={text}
+    text="{text}"
     WHERE
-    id={note_id}
+    note_id={note_id}
 """

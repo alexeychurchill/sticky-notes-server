@@ -44,8 +44,9 @@ def sharedUnshare(ownerId, sharingId):
 def sharedList(myId, page = 0, count = 10):
     """
     Gets notes which shared to user
-    int, int, int -> bool, int, str, [{str:int, str:str, str:str, str:int,
-    str:int, str:str, str:str, str:str}]
+    int, int, int -> bool, int, str, [{str:int, str:str, str:str,
+    str:int, str:int
+    str:int}]
     """
     query = QUERY_SHARED_TO_ME
     query = query.format(**{'my_id':myId,
@@ -59,15 +60,15 @@ def sharedList(myId, page = 0, count = 10):
     sharedList = []
 
     for sharedTuple in data:
-        noteId, title, subject, changeDate, ownerId, ownerLogin, ownerName, ownerLastname = sharedTuple
-        sharedMap = {'note_id':noteId,
-                     'title':title,
-                     'subject':subject,
-                     'change_date':changeDate,
-                     'owner_id':ownerId,
-                     'owner_login':ownerLogin,
-                     'owner_name':ownerName,
-                     'owner_lastname':ownerLastname}
+        noteId, title, subject, creationDate, changeDate, ownerId = sharedTuple
+        sharedMap = {
+            'id':noteId,
+            'title':title,
+            'subject':subject,
+            'creation_date':creationDate,
+            'change_date':changeDate,
+            'owner_id':ownerId
+            }
         sharedList.append(sharedMap)
 
     return True, NO_ERROR, 'Success!', sharedList
@@ -119,13 +120,17 @@ def sharedGet(ownerId, noteId):
 
     id, title, subject, text, changeDate, ownerId, editPermission = data
 
-    return True, NO_ERROR, 'Success!', {'id':id,
-                                        'title':title,
-                                        'subject':subject,
-                                        'text':text,
-                                        'change_date':changeDate,
-                                        'owner_id':ownerId,
-                                        'edit_permission':editPermission}
+    return True, NO_ERROR, 'Success!', {
+        'note':{
+            'id':id,
+            'title':title,
+            'subject':subject,
+            'text':text,
+            'change_date':changeDate,
+            'owner_id':ownerId
+            },
+        'edit_permission':editPermission
+        }
 
 def sharedCanUpdate(ownerId, noteId):
     """
@@ -159,7 +164,7 @@ def sharedUpdate(ownerId, noteId, text):
         cursor.execute(query)
         connection.commit()
     except Exception as e:
-        return False, ERROR_DATABASE, 'Shared update fail!'
+        return False, ERROR_DATABASE, e#'Shared update fail!'
     return True, ERROR_DATABASE, 'Shared updated!'
 
 

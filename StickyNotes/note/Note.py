@@ -23,7 +23,7 @@ def noteCreateRequest():
         return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Unauthorized access!'))
 
     if not 'title' in request.form:
-        return jsonify(simpleError(ERROR_NO_DATA, 'You cann\'t create note without title'))
+        return jsonify(simpleError(ERROR_NO_DATA, 'You can\'t create note without title'))
 
     title = request.form['title']
     

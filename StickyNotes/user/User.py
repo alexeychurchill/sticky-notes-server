@@ -87,7 +87,7 @@ def userByIdRequest(userIdLogin):
     success, userId, login, name, lastName = userTuple
 
     if success:
-        return jsonify(response({'user':{'id':userId, 'login':login, 'name':name, 'last_name':lastName}}))
+        return jsonify(response({'user':{'id':userId, 'login':login, 'name':name, 'lastname':lastName}}))
     else:
         return jsonify(simpleError(login, 'No such user'))
 

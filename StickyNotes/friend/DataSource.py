@@ -48,6 +48,9 @@ def friendMakeRequest(ownerId, userId):
     Makes request for a friendship
     int, int -> bool, int, str
     """
+    if ownerId == userId:
+        return False, ERROR_SOME_MYSTERY, 'You cannot friendship with your own!'
+    
     if friendCheckIfRequested(ownerId, userId):
         return False, ERROR_REQUEST_EXISTS, 'Such friendship request already exists!'
 
@@ -87,10 +90,13 @@ def friendGetMyRequests(ownerId, page = 0, count = 5):
         id, date, userId, login, name, lastname = friendshipRequest
         mapFriendshipRequest = {'id':id,
                                 'date':date,
-                                'user_id':userId,
-                                'login':login,
-                                'name':name,
-                                'lastname':lastname}
+                                'user':{
+                                    'id':userId,
+                                    'login':login,
+                                    'name':name,
+                                    'lastname':lastname
+                                    }
+                                }
         requestList.append(mapFriendshipRequest)
 
     return True, NO_ERROR, 'Success', requestList
@@ -117,10 +123,13 @@ def friendGetRequests(ownerId, page = 0, count = 5):
         id, date, userId, login, name, lastname = friendshipRequest
         mapFriendshipRequest = {'id':id,
                                 'date':date,
-                                'user_id':userId,
-                                'login':login,
-                                'name':name,
-                                'lastname':lastname}
+                                'user':{
+                                    'id':userId,
+                                    'login':login,
+                                    'name':name,
+                                    'lastname':lastname
+                                    }
+                                }
         requestList.append(mapFriendshipRequest)
 
     return True, NO_ERROR, 'Success', requestList

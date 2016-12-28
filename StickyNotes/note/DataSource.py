@@ -39,7 +39,7 @@ def noteUpdate(ownerId, noteId, text):
     except Exception as e:
         return False, ERROR_UPDATE_NOTE, 'Note update failed'
 
-    return True, NO_ERROR, 'Success'
+    return True, NO_ERROR, 'Updated successfuly!'
 
 
 def noteUpdateMetadata(ownerId, noteId, title = '', subject = ''):

@@ -1,5 +1,6 @@
 def response(body):
-    return {'response':body}
+    return {'type':'response',
+            'response':body}
 
 def simpleResponse(code, message):
     """
@@ -11,7 +12,8 @@ def error(body):
     """
     Returns error. Can be used for returning complex error
     """
-    return {'error':body}
+    return {'type':'error',
+            'error':body}
 
 def simpleError(code, message):
     """

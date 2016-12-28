@@ -44,7 +44,7 @@ def friendGetMyRequestsRequest(page):
     success, resultCode, resultMessage, requests = friendGetMyRequests(id, page)
 
     if success:
-        return jsonify(response({'requests':requests}))
+        return jsonify(response(requests))
     else:
         return jsonify(simpleError(resultCode, resultMessage))
 
@@ -67,7 +67,7 @@ def friendGetRequestsRequest(page):
     success, resultCode, resultMessage, requests = friendGetRequests(id, page)
 
     if success:
-        return jsonify(response({'requests':requests}))
+        return jsonify(response(requests))
     else:
         return jsonify(simpleError(resultCode, resultMessage))
 
@@ -130,13 +130,13 @@ def friendGetFriendsRequest(page):
     success, resultCode, resultMessage, friends = friendGetFriends(id, page)
 
     if success:
-        return jsonify(response({'friends':friends}))
+        return jsonify(response(friends))
     else:
         return jsonify(simpleError(resultCode, resultMessage))
 
 
 @stickyNotes.route('/friend/<int:userId>/unfriend', methods=['POST'])
-def friendUnfriendRequestRequest(userId):
+def friendUnfriendRequest(userId):
     """
     """
     if not 'X-AccessToken' in request.headers:
