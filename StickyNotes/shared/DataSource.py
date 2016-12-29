@@ -25,13 +25,16 @@ def sharedShare(ownerId, userId, noteId, editPermission):
     return True, NO_ERROR, 'Note shared!'
 
 
-def sharedUnshare(ownerId, sharingId):
+def sharedUnshare(ownerId, noteId, userId):
     """
     Cancels sharing note to the user
     int, int -> bool, int, str
     """
     query = QUERY_UNSHARE
-    query = query.format(**{'owner_id':ownerId, 'sharing_id':sharingId})
+    query = query.format(**{'owner_id':ownerId,
+                            'note_id':noteId,
+                            'user_id':userId})
+    
     try:
         cursor.execute(query)
         connection.commit()

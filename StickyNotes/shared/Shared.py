@@ -42,8 +42,8 @@ def sharedShareRequest():
         return jsonify(simpleError(resultCode, resultMessage))
 
 
-@stickyNotes.route('/shared/sharing/<int:sharingId>/unshare', methods=['POST'])
-def sharedUnshareRequest(sharingId):
+@stickyNotes.route('/shared/<int:noteId>/unshare/<int:userId>', methods=['POST'])
+def sharedUnshareRequest(noteId, userId):
     """
     """
     if not 'X-AccessToken' in request.headers:
@@ -55,7 +55,7 @@ def sharedUnshareRequest(sharingId):
     if id == -1:
         return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Unauthorized access!'))
 
-    success, resultCode, resultMessage = sharedUnshare(id, sharingId)
+    success, resultCode, resultMessage = sharedUnshare(id, noteId, userId)
 
     if success:
         return jsonify(simpleResponse(resultCode, resultMessage))
@@ -100,7 +100,7 @@ def sharedToListRequest(noteId, page):
     success, resultCode, resultMessage, users = sharedToList(id, noteId, page)
 
     if success:
-        return jsonify(response({'users':users}))
+        return jsonify(response(users))
     else:
         return jsonify(simpleError(resultCode, resultMessage))
 

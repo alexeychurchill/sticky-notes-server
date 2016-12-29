@@ -12,7 +12,9 @@ QUERY_SHARE = """
 QUERY_UNSHARE = """
     DELETE FROM shared_note
     WHERE
-    id={sharing_id}
+    note_id={note_id}
+    AND
+    user_id={user_id}
     AND
     note_id IN (SELECT id FROM note WHERE owner_id={owner_id})
 """
