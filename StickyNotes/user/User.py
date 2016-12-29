@@ -146,7 +146,7 @@ def userSearchRequest():
 
     success, users = userSearch(query)
 
-    return jsonify(response({'users':users}))
+    return jsonify(response(users))
 
 
     
