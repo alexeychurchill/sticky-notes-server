@@ -84,6 +84,43 @@ def noteUpdateRequest(noteId):
         return jsonify(simpleError(resultCode, resultMessage))
 
 
+@stickyNotes.route('/note/<int:noteId>/update/metadata', methods=['POST'])
+def noteUpdateMetadataRequest(noteId):
+    """
+    Updates note
+    """
+    if not 'X-AccessToken' in request.headers:
+        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Access token didn\'t provided'))
+    
+    token = request.headers['X-AccessToken']
+    id = userGetIdByAccessToken(token)
+    
+    if id == -1:
+        return jsonify(simpleError(ERROR_UNAUTHORIZED_ACCESS, 'Unauthorized access!'))
+
+    title = ''
+    subject = ''
+
+    if 'title' in request.form:
+        if request.form['title'] == '':
+            title = None
+        else:
+            title = request.form['title']
+
+    if 'subject' in request.form:
+        if request.form['subject'] == '':
+            subject = None
+        else:
+            subject = request.form['subject']
+
+    success, resultCode, resultMessage = noteUpdateMetadata(id, noteId, title, subject)
+
+    if success:
+        return jsonify(simpleResponse(resultCode, resultMessage))
+    else:
+        return jsonify(simpleError(resultCode, resultMessage))
+
+
 @stickyNotes.route('/note/list/<int:page>', methods=['GET'])
 def noteGetListRequest(page):
     """
